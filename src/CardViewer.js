@@ -2,6 +2,8 @@ import React from 'react';
 import App from "./App";
 import './CardEditor.css';
 
+import { Link } from 'react-router-dom'
+
 class CardViewer extends React.Component {
     constructor(props) {
         super(props);
@@ -13,27 +15,9 @@ class CardViewer extends React.Component {
         }
     }
 
-    nextCard = () => {
-        if (this.state.cardNumber === this.props.cards.length - 2) {
-            this.setState({ cardNumber: this.state.cardNumber + 1 })
-            this.setState({ nextDisabled: true })
-        }
-        else {
-            this.setState({ cardNumber: this.state.cardNumber + 1 })
-            this.setState({ previousDisabled: false })
-        }
-    };
+    nextCard = () => this.setState({ cardNumber: this.state.cardNumber + 1 });
 
-    previousCard = () => {
-        if (this.state.cardNumber == 1) {
-            this.setState({ previousDisabled: true })
-            this.setState({ cardNumber: this.state.cardNumber - 1 })
-        }
-        else {
-            this.setState({ cardNumber: this.state.cardNumber - 1 })
-            this.setState({ nextDisabled: false })
-        }
-    };
+    previousCard = () => this.setState({ cardNumber: this.state.cardNumber - 1 });
 
     switchSide = () => this.setState({ side: !this.state.side });
 
@@ -41,21 +25,35 @@ class CardViewer extends React.Component {
         return (
             <div>
                 <h2>Card Viewer</h2>
-                <h4>Card {this.state.cardNumber + 1}/{this.props.cards.length}</h4>
-                <button onClick={this.previousCard} disabled={this.state.previousDisabled}>Previous</button>
-                <table>
+                <h4 style={{ display: "block", textAlign: "center" }}>Card {this.state.cardNumber + 1} out of {this.props.cards.length}</h4>
+                <button
+                    onClick={this.previousCard}
+                    disabled={this.state.cardNumber <= 0}
+                    className="nextPrevious">
+                    {"<"}
+                </button>
+
+                <table className="flashcardsView">
                     <thead>
                         <tr>
                             <th>{this.state.side ? "Front" : "Back"}</th>
                         </tr>
                     </thead>
                     <tbody onClick={this.switchSide}>
-                        {this.state.side ? this.props.cards[this.state.cardNumber].front : this.props.cards[this.state.cardNumber].back}
+                        <td>{this.state.side ? this.props.cards[this.state.cardNumber].front : this.props.cards[this.state.cardNumber].back}</td>
                     </tbody>
                 </table>
-                <button onClick={this.nextCard} disabled={this.state.nextDisabled}>Next</button>
+
+                <button
+                    onClick={this.nextCard}
+                    disabled={this.state.cardNumber >= this.props.cards.length - 1}
+                    className="nextPrevious">
+                    {">"}
+                </button>
+
                 <hr />
-                <button onClick={this.props.switchMode}>Go to Card Editor</button>
+
+                <Link to="/editor" className="switchButton">Go to Card Editor</Link>
             </div >
         );
     }
